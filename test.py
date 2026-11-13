@@ -1,37 +1,20 @@
-
-from pathlib import Path
-
-import torch
 from ultralytics import YOLO
 
-
-ROOT = Path(__file__).resolve().parent
-
-DATA = r"D:\04_Datasets\obsea_split_YOLO\23sp_4120img_34945annots_2688res\data.yaml"
-
-WEIGHTS = ROOT / "runs" / "detect" / "yolo11n_obsea" / "weights" / "best.pt"
-
-DEVICE = 0 if torch.cuda.is_available() else "cpu"
+from config import common_args, load_config, project_path, weights_path
 
 
 def main():
+    config = load_config()
+    evaluation = config["evaluation"]
 
-    model = YOLO(str(WEIGHTS))
-
+    model = YOLO(str(weights_path(config)))
     metrics = model.val(
-        data=DATA,
-        split="test",
-
-        imgsz=640,
-        batch=8,
-        device=DEVICE,
-        workers=0,
-
-        plots=True,
-
-        project=str(ROOT / "runs" / "evaluation"),
-        name="test",
-        exist_ok=True
+        **common_args(config),
+        split=evaluation["test_split"],
+        plots=evaluation["plots"],
+        project=str(project_path(evaluation["output_dir"])),
+        name=evaluation["test_name"],
+        exist_ok=evaluation["exist_ok"],
     )
 
     print("\n测试集评估结果")

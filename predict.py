@@ -1,32 +1,24 @@
-from pathlib import Path
-
-import torch
 from ultralytics import YOLO
 
-ROOT = Path(__file__).resolve().parent
-
-WEIGHTS = ROOT / "runs" / "detect" / "yolo11n_obsea" / "weights" / "best.pt"
-
-SOURCE = r"D:\04_Datasets\obsea_split_YOLO\23sp_4120img_34945annots_2688res\test\images"
-
-DEVICE = 0 if torch.cuda.is_available() else "cpu"
+from config import dataset_path, load_config, project_path, select_device, weights_path
 
 
 def main():
+    config = load_config()
+    prediction = config["prediction"]
 
-    model = YOLO(str(WEIGHTS))
-
+    model = YOLO(str(weights_path(config)))
     model.predict(
-        source=SOURCE,
-        imgsz=640,
-        conf=0.25,
-        iou=0.7,
-        device=DEVICE,
-        save=True,
-        save_txt=True,
-        project=str(ROOT / "runs" / "prediction"),
-        name="yolo11n_obsea",
-        exist_ok=True,
+        source=str(dataset_path(config) / prediction["source"]),
+        imgsz=config["dataset"]["image_size"],
+        conf=prediction["confidence"],
+        iou=prediction["iou"],
+        device=select_device(config),
+        save=prediction["save"],
+        save_txt=prediction["save_txt"],
+        project=str(project_path(prediction["output_dir"])),
+        name=prediction["name"],
+        exist_ok=prediction["exist_ok"],
     )
 
 

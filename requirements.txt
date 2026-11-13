@@ -1,0 +1,5 @@
+torch
+ultralytics
+PyYAML
+opencv-python
+matplotlib

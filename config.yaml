@@ -1,0 +1,63 @@
+model:
+  name: yolo11n.pt
+  # null：自动使用 training.output_dir/name/weights/best.pt 进行评估和预测。
+  # 也可以填写其他权重路径；相对路径以项目目录为基准。
+  weights: null
+
+training:
+  seed: 42
+  epochs: 100
+  batch_size: 8
+  # auto 会由 YOLO 自动选择学习率；改为 AdamW、SGD 等后使用下方学习率。
+  optimizer: auto
+  learning_rate: 0.001
+  num_workers: 0
+  device: auto  # 有 CUDA 就使用 GPU 0，否则使用 CPU；也可填写 cpu 或 0。
+  patience: 20
+  deterministic: true
+  pretrained: true
+  save: true
+  plots: true
+  output_dir: ./runs/detect
+  name: yolo11n_obsea
+  exist_ok: true
+
+dataset:
+  root: 'D:\04_Datasets\obsea_split_YOLO\23sp_4120img_34945annots_2688res'
+  data_file: data.yaml
+  image_size: 640  # YOLO 训练和评估使用正方形图像的边长。
+
+evaluation:
+  output_dir: ./runs/evaluation
+  val_split: val
+  test_split: test
+  val_name: validation
+  test_name: test
+  plots: true
+  exist_ok: true
+
+prediction:
+  source: test/images  # 相对路径以 dataset.root 为基准，也可以填写绝对路径。
+  confidence: 0.25
+  iou: 0.7
+  output_dir: ./runs/prediction
+  name: yolo11n_obsea
+  save: true
+  save_txt: true
+  exist_ok: true
+
+visualization:
+  split: train  # 数据集中的实际目录名称，例如 train / valid / test。
+  num_images: 3
+  seed: 42
+  image_extensions: [.jpg, .jpeg, .png]
+  figure_size: [14, 6]
+  box_color: [0, 255, 0]  # RGB
+  box_thickness: 2
+  font_face: FONT_HERSHEY_SIMPLEX
+  font_scale: 0.5
+  font_thickness: 1
+  line_type: LINE_AA
+  label_offset: 5
+  label_min_y: 15
+  title_font_size: 10
